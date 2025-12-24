@@ -16,79 +16,60 @@ public int globalcounter;
 
 public static void main(String args[]) throws Exception{
 
-	opertionThread operationObject = new operationThread();
-	anotherThread operationObject2 = new anotherThread();
+	ThreadingTheNeedle mysharedobject = new ThreadingTheNeedle();
 
-
+	operationThread operationObject = new operationThread(mysharedobject);
+	anotherThread operationObject2 = new anotherThread(mysharedobject);
 	operationObject.start();
 	operationObject2.start();
-
-
-	while(true){
-
-		System.out.println(
-	}
-
-
-
-
-
-
-
-
 }
 
 
 //a simple monitor lock, nothing interesting here.
-public synchronized int increase(){
-		return counter++;
-}
+		public int increase(){
+				return globalcounter++;
+		}
 
 
 //same for this too.
-public synchronized int decrease(){
-		return counter--;
-}
+		public int decrease(){
+				return globalcounter--;
+		}
+
+
 }
 
 
 
 class operationThread extends Thread{
+	public ThreadingTheNeedle sharedObject;
 
+	public operationThread(ThreadingTheNeedle sharedObject){
+		this.sharedObject = sharedObject;
+		}
 
 @Override
 public void run(){
-
 	//operation to increment a number;
-
-	ThreadingTheNeedle myobject = new ThreadingTheNeedle();
-
-
 	for(int i = 0; i < 10; i++){
-
-		System.out.println(myobject.increase());
-
+		System.out.println(sharedObject.increase());
 	}
-
-
 }
-
-
 }
 
 
 class anotherThread extends Thread{
 
+	public ThreadingTheNeedle sharedObject;
 
+	public anotherThread(ThreadingTheNeedle sharedObject){
+		this.sharedObject = sharedObject;
+		}
 
 @Override
 public void run(){
-
-		ThreadingTheNeedle myobject = new ThreadingTheNeedle();
-
 		for(int x = 0 ; x < 10; x++){
-				System.out.println(myobject.increase());
+				System.out.println(sharedObject.increase());
 			}
-
-
-}}
+		}
+}
