@@ -1,55 +1,94 @@
 import java.util.*;
 
+
+
+//Observation of how code will work ,
+
+//so basically , I have created two threads, and each thread has an instance ,of the ThreadingTheNeedle class, the threading the needle class,
+//has a global variable called, globalcounter, if a thread was to be created and made to access the resouce, it has to create it's own instance of the class, to get access to that resouce, and taking a look I have created a object level lock , meaning threads will not be blocking each other, they will both be making changes to their own globalcounter, (i.e in this case the increase method in the class);
+
+//synchronized keyword in this case is usless.
+
 public class ThreadingTheNeedle{
 
+
+public int globalcounter;
+
 public static void main(String args[]) throws Exception{
-			something myobject = new something();
-			
-			//myobject.start();
-			
-			//check the state of the already created, 
-			
+
+	opertionThread operationObject = new operationThread();
+	anotherThread operationObject2 = new anotherThread();
 
 
-			myobject.start();
-
-			//Boolean variable = null;
-
-
-			Boolean variable = (myobject.getState().toString().contains("NEW,RUNNING")) ? true : false;
-
-			System.out.println((variable) ? "Test thread is either new , or running": "Test thread ended");
-
-			while(variable){
-				System.out.println(myobject.getState());
-				variable = (myobject.getState().toString() == "TERMINATED") ? false : true;
-			}
+	operationObject.start();
+	operationObject2.start();
 
 
-			System.out.println("this is the main thread it is running alright");
+	while(true){
 
-
-			
+		System.out.println(
 	}
+
+
+
+
+
+
+
 
 }
 
 
+//a simple monitor lock, nothing interesting here.
+public synchronized int increase(){
+		return counter++;
+}
 
-class something extends Thread{
+
+//same for this too.
+public synchronized int decrease(){
+		return counter--;
+}
+}
+
+
+
+class operationThread extends Thread{
 
 
 @Override
 public void run(){
-	System.out.println("This thread has been created,and is running");
 
-	try{
-	Thread.sleep(10000);
+	//operation to increment a number;
+
+	ThreadingTheNeedle myobject = new ThreadingTheNeedle();
+
+
+	for(int i = 0; i < 10; i++){
+
+		System.out.println(myobject.increase());
+
 	}
-	catch(Exception e){
-		System.out.println("An error occured");
-	}
+
+
 }
 
 
 }
+
+
+class anotherThread extends Thread{
+
+
+
+@Override
+public void run(){
+
+		ThreadingTheNeedle myobject = new ThreadingTheNeedle();
+
+		for(int x = 0 ; x < 10; x++){
+				System.out.println(myobject.increase());
+			}
+
+
+}}
