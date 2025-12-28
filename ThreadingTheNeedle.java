@@ -1,75 +1,116 @@
-import java.util.*;
-
-
-
-//Observation of how code will work ,
-
-//so basically , I have created two threads, and each thread has an instance ,of the ThreadingTheNeedle class, the threading the needle class,
-//has a global variable called, globalcounter, if a thread was to be created and made to access the resouce, it has to create it's own instance of the class, to get access to that resouce, and taking a look I have created a object level lock , meaning threads will not be blocking each other, they will both be making changes to their own globalcounter, (i.e in this case the increase method in the class);
-
-//synchronized keyword in this case is usless.
-
 public class ThreadingTheNeedle{
 
 
-public int globalcounter;
-
 public static void main(String args[]) throws Exception{
 
-	ThreadingTheNeedle mysharedobject = new ThreadingTheNeedle();
+	//common threading object.
 
-	operationThread operationObject = new operationThread(mysharedobject);
-	anotherThread operationObject2 = new anotherThread(mysharedobject);
-	operationObject.start();
-	operationObject2.start();
+	ThreadingTheNeedle commonobject = new ThreadingTheNeedle();
+
+	firstThread mythreadobject = new firstThread(commonobject);
+	mythreadobject.setName("first thread");
+	mythreadobject.start();
+
+
+
+	//starting second thread.
+	secondThread secondobject = new secondThread(commonobject);
+	Thread mysecond = new Thread(secondobject);
+	mysecond.setName("second thread");
+	mysecond.start();
+
+
+
+	//starting third thread.
+// 	Runnable myrunnableobject = () -> {
+// 			//action goes in here.
+//
+// 			ThreadingTheNeedle needleobject = new ThreadingTheNeedle();
+//
+// 			needleobject.action(Thread.currentThread().getName());
+//
+// 	};
+//
+
+
+
+	ThreadingTheNeedle xx = new ThreadingTheNeedle();
+	Thread mythirdobject = new Thread(xx.createRunnable(commonobject));
+	mythirdobject.setName("third thread");
+	mythirdobject.start();
+
+
+
 }
 
+public synchronized void  action(String threadname, String threadnumber){
 
-//a simple monitor lock, nothing interesting here.
-		public int increase(){
-				return globalcounter++;
-		}
-
-
-//same for this too.
-		public int decrease(){
-				return globalcounter--;
-		}
+	int maximum = 5;
+	int minimum = 1;
 
 
-}
-
-
-
-class operationThread extends Thread{
-	public ThreadingTheNeedle sharedObject;
-
-	public operationThread(ThreadingTheNeedle sharedObject){
-		this.sharedObject = sharedObject;
-		}
-
-@Override
-public void run(){
-	//operation to increment a number;
-	for(int i = 0; i < 10; i++){
-		System.out.println(sharedObject.increase());
-	}
-}
-}
-
-
-class anotherThread extends Thread{
-
-	public ThreadingTheNeedle sharedObject;
-
-	public anotherThread(ThreadingTheNeedle sharedObject){
-		this.sharedObject = sharedObject;
-		}
-
-@Override
-public void run(){
-		for(int x = 0 ; x < 10; x++){
-				System.out.println(sharedObject.increase());
+			System.out.println(threadname);
+			for(int x = minimum ; x <= maximum; x++){
+				System.out.println(x);
 			}
-		}
+
 }
+
+
+public Runnable createRunnable(ThreadingTheNeedle objectx){
+
+	return () -> {
+			objectx.action(Thread.currentThread().getName(),"3");
+	};
+}
+
+
+}
+
+
+//first thread.
+
+class firstThread extends Thread{
+
+private ThreadingTheNeedle sharedobject;
+
+firstThread(ThreadingTheNeedle obj){
+	this.sharedobject = obj;
+
+}
+
+@Override
+public void run(){
+
+sharedobject.action(this.getName(), "1");
+
+
+}
+
+}
+
+
+class secondThread implements Runnable{
+
+
+private ThreadingTheNeedle sharedobject;
+
+
+secondThread(ThreadingTheNeedle obj){
+	this.sharedobject = obj;
+
+}
+
+
+@Override
+public void run(){
+
+sharedobject.action(Thread.currentThread().getName(), "2");
+
+	}
+
+}
+
+
+
+
